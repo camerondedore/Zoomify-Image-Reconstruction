@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>        
+        <meta charset="UTF-8">
+        <title>Zoomify Image Reconstruction</title>
+        <script>
+            ////////////////////////////////////////////////////////
+            //
+            //      To use:
+            //      add all images into the images folder, 
+            //      change the setting variables to match 
+            //      the images.  Once the canvas has drawn
+            //      all the images, go to the canvas in the
+            //      inspector and copy as Image Data-URL.
+            //      Use an online base64-to-jpg converter.
+            //
+            ////////////////////////////////////////////////////////
+            //
+            //      settings for recreating a zoomify-ed image
+            //
+
+            var tilesize = 256;     // size of the individual images
+            var zoomLevel = 6;      // the first number in the file name
+            var columns = 39;       // the highest second number in the file name
+            var rows = 25;          // the highest third number in the file name
+            var width = 10200;      // the width and height can be found by multipling
+            var height = 6600;      //      the number of rows and columns by the tilesize
+                                    //      (+1 to the columns and rows variables)
+            
+            var ctx;
+            var canvas;
+
+            function init()
+            {                
+                canvas = document.getElementById('reproduction');
+                canvas.width = width;
+                canvas.height = height;
+                ctx = canvas.getContext('2d');
+                draw(0, 0);
+            }
+
+            function draw(r, c)
+            {
+                var img = new Image();
+                img.onload = () => {
+                    ctx.drawImage(img, c * tilesize, r * tilesize);
+                    c++;
+                    if(c > columns){
+                        r++;
+                        c= 0;
+                    }
+                    if(r <= rows){
+                        draw(r, c);
+                    }
+                };                            
+                img.src = `./Images/${zoomLevel}-${c}-${r}.jpg`
+            }
+        </script>
+    </head>
+
+    <body onload="init()">
+        <canvas id="reproduction"></canvas>
+    </body>
+</html>
